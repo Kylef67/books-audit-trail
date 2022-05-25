@@ -1,10 +1,38 @@
 service: books-audit-trail
 frameworkVersion: '2 || 3'
+useDotenv: true
+variablesResolutionMode: 20210326
 
 custom:
-  tableName: 'books-audit-trail-${sls:stage}'
+  companyName: 'ppfc'
+  tableName: books-audit-trail
+  topicName: 'books-audit-trail-${sls:stage}'
+  topicArn:
+    Fn::Join:
+      - ''
+      - - 'arn:aws:sns:'
+        - Ref: AWS::Region
+        - ":"
+        - Ref: AWS::AccountId
+        - ":"
+        - Fn::GetAtt:
+          - BooksAuditTrailTopic
+          - TopicName
+  dynamodb:
+  # If you only want to use DynamoDB Local in some stages, declare them here
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
 
 provider:
+  region: ap-southeast-1
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
@@ -22,19 +50,20 @@ provider:
           Resource:
             - Fn::GetAtt: [ LogsTable, Arn ]
   environment:
-    LOGS_TABLE: ${self:custom.tableName}
+    LOGS_TABLE: '${self:custom.companyName}-${self:custom.tableName}-${sls:stage}'
 
 functions:
   api:
     handler: handler.handler
     events:
       - httpApi: '*'
+      - sns: arn:aws:sns:${aws:region}:${aws:accountId}:${self:custom.topicName}
 
 resources:
   Resources:
     LogsTable:
       Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
+      #DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
           - AttributeName: userId
@@ -43,5 +72,12 @@ resources:
           - AttributeName: userId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:custom.tableName}
-        
+        TableName: '${self:custom.companyName}-${self:custom.tableName}-${sls:stage}'
+    BooksAuditTrailTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: 'Books Audit Trail SNS'
+        TopicName: ${self:custom.topicName}
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
