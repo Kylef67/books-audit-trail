@@ -5,7 +5,14 @@ const serverless = require("serverless-http");
 const app = express();
 
 const LOGS_TABLE = process.env.LOGS_TABLE;
-const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
+const options = {};
+
+if(process.env.IS_OFFLINE) {
+  options.region = 'localhost';
+  options.endpoint = 'http://localhost:8000'
+} 
+
+const dynamoDbClient = new AWS.DynamoDB.DocumentClient(options)
 
 app.use(express.json());
 
