@@ -80,4 +80,5 @@ resources:
         TopicName: ${self:custom.topicName}
 plugins:
   - serverless-dynamodb-local
+  - serverless-offline-sns
   - serverless-offline
