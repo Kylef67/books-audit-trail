@@ -32,7 +32,7 @@ custom:
       convertEmptyValues: true
   serverless-offline-sns:
     port: 4002 # a free port for the sns server to run on
-    debug: false
+    debug: true
 
 provider:
   region: ap-southeast-1

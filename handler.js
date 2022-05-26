@@ -70,7 +70,7 @@ app.get('/', (req, res) => {
 
   var params = {
     Protocol: 'http', /* required */   //http , https ,application
-    TopicArn: process.env.AUDIT_SNS_TOPIC,
+    TopicArn: 'arn:aws:sns:ap-southeast-1:123456789012:books-audit-trail-dev',
     Endpoint: 'http://127.0.0.1:4002'
   };
 
@@ -79,7 +79,7 @@ app.get('/', (req, res) => {
       console.log(err);
     } else {
       console.log(data);
-
+      console.log("pong")
     }
   });
   res.end();
@@ -87,16 +87,22 @@ app.get('/', (req, res) => {
 
 app.get('/send', (req, res) => {
 
-  sns.publish({
-    Message: {
-      content : "Hello"
-    },
-    MessageStructure: "json",
-    TopicArn: process.env.AUDIT_SNS_TOPIC,
-  }, () => {
-    console.log(process.env.AUDIT_SNS_TOPIC)
-    console.log("ping");
+  console.log(process.env.AUDIT_SNS_TOPIC)
+
+  var sns = new AWS.SNS({
+    endpoint: "http://127.0.0.1:4002",
+    region: "ap-southeast-1",
   });
+  
+  sns.publish({
+    Message: '{"default": "powta!"}',
+    MessageStructure: "json",
+    TopicArn: 'arn:aws:sns:ap-southeast-1:123456789012:books-audit-trail-dev',
+  }, () => {
+    console.log("ping");
+    
+  });
+
   res.end();
 });
 
@@ -110,3 +116,31 @@ app.use((req, res, next) => {
 
 
 module.exports.handler = serverless(app);
+
+// 'use strict';
+// var AWS = require("aws-sdk");
+
+// module.exports.ping = (event, context, callback) => {
+  
+//   console.log(process.env.AUDIT_SNS_TOPIC)
+  
+//   var sns = new AWS.SNS({
+//     endpoint: "http://localhost:4002",
+//     region: "ap-southeast-1",
+//   });
+//   sns.publish({
+//     Message: '{"default": "hello!"}',
+//     MessageStructure: "json",
+//     TopicArn: process.env.AUDIT_SNS_TOPIC,
+//   }, () => {
+//     console.log("ping");
+//     callback(null, {response: "return from lambda ping"});
+//   });
+// };
+
+// module.exports.pong = (event, context, callback) => {
+//   console.log("pong start");
+//   console.log(JSON.stringify(event));
+//   // console.log(event.Records[0].Sns.Message);
+//   callback(null, {response: "return from lambda pong"});
+// };
