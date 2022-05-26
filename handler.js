@@ -7,10 +7,12 @@ const app = express();
 const LOGS_TABLE = process.env.LOGS_TABLE;
 const options = {};
 
-if(process.env.IS_OFFLINE) {
+let sns = new AWS.SNS();
+
+if (process.env.IS_OFFLINE) {
   options.region = 'localhost';
   options.endpoint = 'http://localhost:8000'
-} 
+}
 
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient(options)
 
@@ -62,11 +64,49 @@ app.post("/log", async function (req, res) {
   }
 });
 
+app.get('/', (req, res) => {
+
+  console.log(process.env.AUDIT_SNS_TOPIC)
+
+  var params = {
+    Protocol: 'http', /* required */   //http , https ,application
+    TopicArn: process.env.AUDIT_SNS_TOPIC,
+    Endpoint: 'http://127.0.0.1:4002'
+  };
+
+  sns.subscribe(params, function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(data);
+
+    }
+  });
+  res.end();
+});
+
+app.get('/send', (req, res) => {
+
+  sns.publish({
+    Message: {
+      content : "Hello"
+    },
+    MessageStructure: "json",
+    TopicArn: process.env.AUDIT_SNS_TOPIC,
+  }, () => {
+    console.log(process.env.AUDIT_SNS_TOPIC)
+    console.log("ping");
+  });
+  res.end();
+});
+
 app.use((req, res, next) => {
   return res.status(404).json({
     error: "Not Found",
   });
 });
+
+
 
 
 module.exports.handler = serverless(app);

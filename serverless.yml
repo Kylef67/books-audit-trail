@@ -30,6 +30,9 @@ custom:
       migrate: true
       seed: true
       convertEmptyValues: true
+  serverless-offline-sns:
+    port: 4002 # a free port for the sns server to run on
+    debug: false
 
 provider:
   region: ap-southeast-1
@@ -51,6 +54,7 @@ provider:
             - Fn::GetAtt: [ LogsTable, Arn ]
   environment:
     LOGS_TABLE: '${self:custom.companyName}-${self:custom.tableName}-${sls:stage}'
+    AUDIT_SNS_TOPIC: 'arn:aws:sns:${aws:region}:${aws:accountId}:${self:custom.topicName}'
 
 functions:
   api:
