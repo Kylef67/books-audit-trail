@@ -135,9 +135,9 @@ resources:
     SNSArn:
       Type: 'AWS::SSM::Parameter'
       Properties:
-        Name: ${self:custom.topicName}
+        Name: '${self:custom.topicName}-sns-arn'
         Type: String
-        Value: 'arn:aws:ssm:${aws:region}:${aws:accountId}:${self:custom.topicName}'
+        Value: 'arn:aws:sns:${aws:region}:${aws:accountId}:${self:custom.topicName}'
     ApiEndpoint:
       Type: 'AWS::SSM::Parameter'
       Properties:
