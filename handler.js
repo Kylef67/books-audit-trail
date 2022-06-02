@@ -1,5 +1,7 @@
 'use strict';
 var AWS = require("aws-sdk");
+var jsonDiff = require("json-diff");
+const { sanitizeData } = require("./sanitizer");
 
 const snsOptions = {}
 const LOGS_TABLE = process.env.LOGS_TABLE;
@@ -25,8 +27,7 @@ const sns = new AWS.SNS({
   region: "ap-southeast-1",
 });
 
-module.exports.sendSns = (event, context, callback) => {
-
+function sendSns(event, context, callback) {
   console.log(snsOptions.TopicArn)
   console.log(process.env.IS_OFFLINE)
 
@@ -45,18 +46,24 @@ module.exports.sendSns = (event, context, callback) => {
     MessageStructure: "json",
     TopicArn: snsOptions.TopicArn,
   }, () => {
-    console.log("ping");
     callback(null, {
       'statusCode': 400,
       'body': JSON.stringify({ 'message': 'No request body' })
     });
   });
+}
 
-};
-
-module.exports.receiveSns = async (event, context, callback) => {
-
+async function receiveSns(event, context, callback) {
   const data = JSON.parse(event.Records[0].Sns.Message)
+
+  data.old = sanitizeData(data.old, data.booksModule);
+  data.new = sanitizeData(data.new, data.booksModule);
+
+  if (data.old && data.new) {
+    data.diff = jsonDiff.diff(data.old, data.new)
+  }
+
+  console.log(JSON.stringify(data));
 
   const params = {
     TableName: LOGS_TABLE,
@@ -69,10 +76,9 @@ module.exports.receiveSns = async (event, context, callback) => {
     'statusCode': 400,
     'body': JSON.stringify({ 'message': save })
   });
-};
+}
 
-module.exports.getAuditTrails = async (event, context, callback) => {
-
+async function getAuditTrails(event, context, callback) {
   const { userId, from, to, booksModule } = event.queryStringParameters
 
   const queryFrom = (from) ? new Date(from).getTime() : new Date('2022-05-27').getTime()
@@ -115,5 +121,11 @@ module.exports.getAuditTrails = async (event, context, callback) => {
     console.log(error);
 
   }
+}
+
+module.exports = {
+  sendSns,
+  getAuditTrails,
+  receiveSns
 
 }

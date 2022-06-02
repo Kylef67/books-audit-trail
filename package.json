@@ -2,10 +2,13 @@
   "name": "books-audit-trail",
   "version": "1.0.0",
   "description": "",
-  "dependencies": {},
   "devDependencies": {
     "serverless-dynamodb-local": "^0.2.40",
     "serverless-offline": "^8.8.0",
     "serverless-offline-sns": "^0.76.0"
+  },
+  "dependencies": {
+    "json-diff": "^0.7.4",
+    "lodash": "^4.17.21"
   }
 }
