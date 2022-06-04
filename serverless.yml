@@ -78,7 +78,7 @@ provider:
 
 functions:
   sendSns:
-    handler: handler.sendSns
+    handler: src/handler.sendSns
     events:
       - http:
           path: sendSns
@@ -86,12 +86,12 @@ functions:
           cors: true
 
   receiveSns:
-    handler: handler.receiveSns
+    handler: src/handler.receiveSns
     events:
       - sns: arn:aws:sns:${aws:region}:${aws:accountId}:${self:custom.topicName}
 
   logs:
-    handler: handler.getAuditTrails
+    handler: src/handler.getAuditTrails
     events:
     - http:
           path: logs
@@ -148,3 +148,10 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline-sns
   - serverless-offline
+
+package:
+  exclude:
+      - ./**
+  include:
+    - src/**
+    - node_modules/**
