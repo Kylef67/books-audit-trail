@@ -77,19 +77,10 @@ provider:
     AUDIT_SNS_TOPIC: 'arn:aws:sns:${aws:region}:${aws:accountId}:${self:custom.topicName}'
 
 functions:
-  sendSns:
-    handler: src/handler.sendSns
-    events:
-      - http:
-          path: sendSns
-          method: get
-          cors: true
-
   receiveSns:
     handler: src/handler.receiveSns
     events:
       - sns: arn:aws:sns:${aws:region}:${aws:accountId}:${self:custom.topicName}
-
   logs:
     handler: src/handler.getAuditTrails
     events:

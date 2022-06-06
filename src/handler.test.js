@@ -1,5 +1,5 @@
 const aws = require('aws-sdk');
-const { receiveSns } = require('./handler');
+const handler = require('./handler');
 
 jest.mock('aws-sdk', () => {
     const mockedSSM = {
@@ -30,7 +30,7 @@ jest.mock('aws-sdk', () => {
 
 describe('receiveSns', () => {
 
-    it("should work", async () => {
+    it("should process receive SNS when payload is correct", async () => {
         
         //arrange
         const payload = {
@@ -39,11 +39,12 @@ describe('receiveSns', () => {
                     Sns: {
                         Message: JSON.stringify({
                             "new" : {
-                                "some_key" : "new_some_value",
+                                "customer_name" : "new_some_value",
                             },
                             "old" : {
-                                "some_key" : "old_some_value",
-                            }
+                                "customer_name" : "old_some_value",
+                            },
+                            "booksModule" : "SalesInvoice"
                         })
                     }
                 }
@@ -53,12 +54,60 @@ describe('receiveSns', () => {
         const callback = jest.fn();
 
         //act
-        const result = await receiveSns(payload, undefined, callback)
+        await handler.receiveSns(payload, undefined, callback)
 
         //assert
-        console.log(result);
+        expect(callback).toHaveBeenCalled();
 
     })
+
+    it("should process receive SNS when payload is correct", async () => {
+        
+        //arrange
+        const payload = {
+            Records: [
+                {
+                    Sns: {
+                        Message: JSON.stringify({"invalid_Data" : true})
+                    }
+                }
+            ]
+        }
+
+        const callback = jest.fn();
+
+        //act
+        await handler.receiveSns(payload, undefined, callback)
+
+        //assert
+        expect(callback).toHaveBeenCalled();
+
+    })
+
+    it("should initialize correct dynamoDB options when offline", async () => {
+        
+        //arrange
+        const payload = {
+            Records: [
+                {
+                    Sns: {
+                        Message: JSON.stringify({"invalid_Data" : true})
+                    }
+                }
+            ]
+        }
+
+        const callback = jest.fn();
+
+        //act
+        await handler.receiveSns(payload, undefined, callback)
+
+        //assert
+        expect(callback).toHaveBeenCalled();
+
+
+    })
+    
 
 
 })

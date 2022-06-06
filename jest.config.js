@@ -3,8 +3,12 @@ module.exports = {
         "^.+\\.(js|jsx)?$": "babel-jest"
     },
     testEnvironmentOptions: {
-        url:"http://localhost/"
+        url:"http://localhost/",
+        IS_OFFLINE: true
     },
+    setupFiles: [
+        "<rootDir>/src/setEnvVars.js"
+    ],
     collectCoverage: true,
     collectCoverageFrom: ["src/**.js", "src/*/**.js"],
     testMatch: [ "**/src/(*.)+test.[jt]s?(x)" ],

@@ -12,7 +12,8 @@ function sanitizeData(data, moduleAuditSettings) {
         const sanitizedData = {};
 
         moduleAuditSettings.forEach(field => {
-            if (typeof (field) === "string") {
+            
+            if (typeof (field) === "string" && data[field]) {
                 sanitizedData[field] = get(data, field);
             }
 
@@ -20,23 +21,27 @@ function sanitizeData(data, moduleAuditSettings) {
 
                 for (let [key, lineItemFields] of Object.entries(field)) {
 
-                    if (typeof (lineItemFields) === "string") {
-                        sanitizedData[lineItemFields] = get(data, key);
-                    } else {
-                        sanitizedData[key] = [];
-
-                        data[key].forEach((lineItem) => {
-
-                            let sanitizedLineItem = {};
-
-                            lineItemFields.forEach((lineItemField) => {
-                                sanitizedLineItem[lineItemField] = get(lineItem, lineItemField);
+                    if(data[key]) {
+                        if (typeof (lineItemFields) === "string") {
+                            sanitizedData[lineItemFields] = get(data, key);
+                        } else {
+                            sanitizedData[key] = [];
+    
+                            data[key].forEach((lineItem) => {
+    
+                                let sanitizedLineItem = {};
+    
+                                lineItemFields.forEach((lineItemField) => {
+                                    sanitizedLineItem[lineItemField] = get(lineItem, lineItemField);
+                                })
+    
+                                sanitizedData[key].push(sanitizedLineItem)
+    
                             })
-
-                            sanitizedData[key].push(sanitizedLineItem)
-
-                        })
+                        }
                     }
+
+                   
 
 
                 }

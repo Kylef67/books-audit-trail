@@ -30,7 +30,7 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient(dynamoDBOptions)
  * @param {Object} callback
  */
 async function receiveSns(event, context, callback) {
-    console.log(event);
+
     const data = JSON.parse(event.Records[0].Sns.Message)
 
     data.old = sanitizeData(data.old, moduleSettings[data.booksModule]);
@@ -39,8 +39,6 @@ async function receiveSns(event, context, callback) {
     if (data.old && data.new) {
         data.diff = jsonDiff.diff(data.old, data.new)
     }
-
-    console.log(JSON.stringify(data));
 
     const params = {
         TableName: LOGS_TABLE,
@@ -102,7 +100,6 @@ async function getAuditTrails(event, context, callback) {
         }
     } catch (error) {
         console.log(error);
-
     }
 }
 
