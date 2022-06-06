@@ -1,17 +1,7 @@
-const aws = require('aws-sdk');
 const handler = require('./handler');
 
 jest.mock('aws-sdk', () => {
-    const mockedSSM = {
-        getParameter: jest.fn().mockReturnThis(),
-        promise: jest.fn()
-    };
-    const mockedConfig = {
-        update: jest.fn()
-    };
     return {
-        SSM: jest.fn(() => mockedSSM),
-        config: mockedConfig,
         DynamoDB: {
             DocumentClient: jest.fn(() => ({
                 put: () => {
@@ -21,7 +11,19 @@ jest.mock('aws-sdk', () => {
                         },
                         
                     }
-                }
+                },
+                query: () => {
+                    return {
+                        "promise" : () => {
+                            return {
+                                Items: [{
+                                    "sample_data" : true
+                                }]
+                            }
+                        },
+                        
+                    }
+                },
             }))
         }
     };
@@ -61,7 +63,7 @@ describe('receiveSns', () => {
 
     })
 
-    it("should process receive SNS when payload is correct", async () => {
+    it("should process receive SNS when payload is incorrect", async () => {
         
         //arrange
         const payload = {
@@ -110,4 +112,51 @@ describe('receiveSns', () => {
     
 
 
+})
+
+describe('getAuditTrails', () => {
+
+    beforeEach(() => {
+        jest.resetModules() // Most important - it clears the cache
+    });
+
+    it("should process getAuditTrails when payload is complete" , async() => {
+
+        //arrange
+        const event = {
+            queryStringParameters: {
+                userId: 1,
+                from: '2020-01-01',
+                to: '2020-01-02',
+                booksModule: 'SalesInvoice'
+            }
+        }
+
+        const callback = jest.fn();
+
+        //act
+        await handler.getAuditTrails(event, undefined, callback)
+
+        //assert
+        expect(callback).toHaveBeenCalled();
+
+    })
+
+    it("should process getAuditTrails when payload is incomplete" , async() => {
+        //arrange
+        const event = {
+            queryStringParameters: {
+                booksModule: 'SalesInvoice'
+            }
+        }
+
+        const callback = jest.fn();
+
+        //act
+        await handler.getAuditTrails(event, undefined, callback)
+
+        //assert
+        expect(callback).toHaveBeenCalled();
+
+    })
 })

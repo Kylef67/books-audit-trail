@@ -12,6 +12,7 @@ snsOptions.TopicArn = process.env.AUDIT_SNS_TOPIC;
 snsOptions.Endpoint = 'https://sns.ap-southeast-1.amazonaws.com'
 snsOptions.Protocol = 'https'
 
+/* istanbul ignore next */
 if (process.env.IS_OFFLINE) {
     snsOptions.Endpoint = 'http://localhost:4002'
     snsOptions.Protocol = 'http'
@@ -84,23 +85,13 @@ async function getAuditTrails(event, context, callback) {
         params.FilterExpression = "userId = :userId"
     }
 
-    try {
-        const { Items } = await dynamoDbClient.query(params).promise();
+    const { Items } = await dynamoDbClient.query(params).promise();
 
-        console.log(Items)
-        if (Items) {
+    callback(null, {
+        'statusCode': 400,
+        'body': JSON.stringify({ 'message': Items })
+    });
 
-            callback(null, {
-                'statusCode': 400,
-                'body': JSON.stringify({ 'message': Items })
-            });
-
-        } else {
-
-        }
-    } catch (error) {
-        console.log(error);
-    }
 }
 
 module.exports = {

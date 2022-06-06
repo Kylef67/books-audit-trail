@@ -23,6 +23,7 @@
                 "description",
                 "ordered_quantity",
                 "quantity",
+                "unit_cost",
                 "warehouse.name",
                 "multiple_uom_name",
                 "general_ledger_account.name",
@@ -30,6 +31,9 @@
                 "sub_total",
                 "tax.name"
             ]
-        }
+        },
+        "total",
+        "sub_total",
+        "output_vat"
     ]
 }

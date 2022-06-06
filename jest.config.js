@@ -3,8 +3,7 @@ module.exports = {
         "^.+\\.(js|jsx)?$": "babel-jest"
     },
     testEnvironmentOptions: {
-        url:"http://localhost/",
-        IS_OFFLINE: true
+        url:"http://localhost/"
     },
     setupFiles: [
         "<rootDir>/src/setEnvVars.js"
