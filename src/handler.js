@@ -49,7 +49,7 @@ async function receiveSns(event, context, callback) {
     const save = await dynamoDbClient.put(params).promise();
 
     callback(null, {
-        'statusCode': 400,
+        'statusCode': 200,
         'body': JSON.stringify({ 'message': save })
     });
 }
@@ -63,12 +63,12 @@ async function receiveSns(event, context, callback) {
 async function getAuditTrails(event, context, callback) {
     const { userId, from, to, booksModule } = event.queryStringParameters
 
-    const queryFrom = (from) ? new Date(from).getTime() : new Date('2022-05-27').getTime()
-    const queryTo = (to) ? new Date(to).getTime() : new Date().getTime()
+    const queryFrom = (from) ? new Date(from).getTime() - (8 * 3600000) : new Date('2022-05-27').getTime()
+    const queryTo = (to) ? new Date(to).getTime() - (8 * 3600000) : new Date().getTime()
 
     const expressions = {
         ':booksModule': booksModule,
-        ':from': parseFloat(queryFrom),
+        ':from': parseFloat(queryFrom), //remove gmt + 8
         ':to': parseFloat(queryTo),
     };
 
@@ -77,7 +77,8 @@ async function getAuditTrails(event, context, callback) {
     const params = {
         TableName: LOGS_TABLE,
         ExpressionAttributeValues: expressions,
-        KeyConditionExpression: keyCondition
+        KeyConditionExpression: keyCondition,
+        ScanIndexForward: false
     };
 
     if (userId) {
@@ -85,11 +86,11 @@ async function getAuditTrails(event, context, callback) {
         params.FilterExpression = "userId = :userId"
     }
 
-    const { Items } = await dynamoDbClient.query(params).promise();
+    const result = await dynamoDbClient.query(params).promise();
 
     callback(null, {
-        'statusCode': 400,
-        'body': JSON.stringify({ 'message': Items })
+        'statusCode': 200,
+        'body': JSON.stringify(result)
     });
 
 }

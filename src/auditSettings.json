@@ -34,6 +34,7 @@
         },
         "total",
         "sub_total",
-        "output_vat"
+        "output_vat",
+        "status_name"
     ]
 }
