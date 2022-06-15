@@ -1,13 +1,17 @@
 {
     "SalesInvoice": [
-        "customer_name",
+        {
+            "customer_name": "entity_name"
+        },
         "delivery_address",
         "payment_term_name",
         "sales_invoice_due_date",
         "memo",
         "reference_number",
         "sales_invoice_date",
-        "delivery_receipt_number",
+        {
+            "delivery_receipt_number": "transaction_number"
+        },
         "purchase_order_number",
         "chart_of_account.name",
         "period",
