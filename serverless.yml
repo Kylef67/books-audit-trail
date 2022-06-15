@@ -43,7 +43,7 @@ custom:
             - Ref: AWS::Region
             - '.amazonaws.com'
 provider:
-  region: ap-southeast-1
+  region: ap-northeast-1
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
