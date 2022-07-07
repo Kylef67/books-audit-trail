@@ -6,7 +6,7 @@ const { sanitizeData } = require("./sanitizer");
 const snsOptions = {}
 const LOGS_TABLE = process.env.LOGS_TABLE;
 const dynamoDBOptions = { apiVersion: '2012-08-10' };
-const moduleSettings = require("./auditSettings.json");
+const moduleSettings = require("./auditSettings")
 
 snsOptions.TopicArn = process.env.AUDIT_SNS_TOPIC;
 snsOptions.Endpoint = 'https://sns.ap-southeast-1.amazonaws.com'

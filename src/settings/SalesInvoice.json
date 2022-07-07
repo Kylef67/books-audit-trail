@@ -1,0 +1,42 @@
+[
+    {
+        "customer_name": "entity_name"
+    },
+    "delivery_address",
+    "payment_term_name",
+    "sales_invoice_due_date",
+    "memo",
+    "reference_number",
+    "sales_invoice_date",
+    {
+        "delivery_receipt_number": "transaction_number"
+    },
+    "purchase_order_number",
+    "chart_of_account.name",
+    "period",
+    "sales_representative_name",
+    "business_style",
+    "city",
+    "barangay",
+    {
+        "received_date": "delivery_date"
+    },
+    {
+        "sales_invoice_items": [
+            "description",
+            "ordered_quantity",
+            "quantity",
+            "unit_cost",
+            "warehouse.name",
+            "multiple_uom_name",
+            "general_ledger_account.name",
+            "general_ledger_account.account_code",
+            "sub_total",
+            "tax.name"
+        ]
+    },
+    "total",
+    "sub_total",
+    "output_vat",
+    "status_name"
+]
