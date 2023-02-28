@@ -1,12 +1,12 @@
-service: books-audit-trail
+service: aesi-audit-trail
 frameworkVersion: '2 || 3'
 useDotenv: true
 variablesResolutionMode: 20210326
 
 custom:
-  companyName: 'ppfc'
-  tableName: books-audit-trail
-  topicName: '${self:custom.companyName}-books-audit-trail-${sls:stage}'
+  companyName: 'cargill'
+  tableName: aesi-audit-trail
+  topicName: '${self:custom.companyName}-aesi-audit-trail-${sls:stage}'
   topicArn:
     Fn::Join:
       - ''
@@ -16,7 +16,7 @@ custom:
         - Ref: AWS::AccountId
         - ":"
         - Fn::GetAtt:
-          - BooksAuditTrailTopic
+          - AesiAuditTrailTopic
           - TopicName
   dynamodb:
   # If you only want to use DynamoDB Local in some stages, declare them here
@@ -33,7 +33,7 @@ custom:
   serverless-offline-sns:
     port: 4002 # a free port for the sns server to run on
     debug: true
-    accountId: 483382590502
+    accountId: 515071363261
   webServiceEndpoint:
         Fn::Join:
           - ''
@@ -96,19 +96,19 @@ resources:
       #DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
-          - AttributeName: booksModule
+          - AttributeName: aesiModule
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: N
           - AttributeName: userId
             AttributeType: S        
         KeySchema:
-          - AttributeName: booksModule
+          - AttributeName: aesiModule
             KeyType: HASH
           - AttributeName: createdAt
             KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: booksModuleIndex
+          - IndexName: aesiModuleIndex
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
@@ -118,10 +118,10 @@ resources:
               ProjectionType: 'ALL'
         BillingMode: PAY_PER_REQUEST
         TableName: '${self:custom.companyName}-${self:custom.tableName}-${sls:stage}'
-    BooksAuditTrailTopic:
+    AesiAuditTrailTopic:
       Type: AWS::SNS::Topic
       Properties:
-        DisplayName: 'Books Audit Trail SNS'
+        DisplayName: 'AESI Audit Trail SNS'
         TopicName: ${self:custom.topicName}
     SNSArn:
       Type: 'AWS::SSM::Parameter'
@@ -139,7 +139,6 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline-sns
   - serverless-offline
-
 package:
   exclude:
       - ./**

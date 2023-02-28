@@ -1,9 +1,9 @@
 const { get } = require("lodash");
 
 /**
- * sanitizeData - retrieve / parse settings value based on books module selected
+ * sanitizeData - retrieve / parse settings value based on aesi module selected
  * @param {Object} data - the sns payload
- * @param {String} moduleAuditSettings - books module to be audited
+ * @param {String} moduleAuditSettings - aesi module to be audited
  * @returns {Object}
  */
 function sanitizeData(data, moduleAuditSettings) {

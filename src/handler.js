@@ -34,8 +34,8 @@ async function receiveSns(event, context, callback) {
 
     const data = JSON.parse(event.Records[0].Sns.Message)
 
-    data.old = sanitizeData(data.old, moduleSettings[data.booksModule]);
-    data.new = sanitizeData(data.new, moduleSettings[data.booksModule]);
+    data.old = sanitizeData(data.old, moduleSettings[data.aesiModule]);
+    data.new = sanitizeData(data.new, moduleSettings[data.aesiModule]);
 
     if (data.old && data.new) {
         data.diff = jsonDiff.diff(data.old, data.new)
@@ -61,18 +61,18 @@ async function receiveSns(event, context, callback) {
  * @param {Object} callback
  */
 async function getAuditTrails(event, context, callback) {
-    const { userId, from, to, booksModule } = event.queryStringParameters
+    const { userId, from, to, aesiModule } = event.queryStringParameters
 
     const queryFrom = (from) ? new Date(from).getTime() - (8 * 3600000) : new Date('2022-05-27').getTime()
     const queryTo = (to) ? new Date(to).getTime() - (8 * 3600000) : new Date().getTime()
 
     const expressions = {
-        ':booksModule': booksModule,
+        ':aesiModule': aesiModule,
         ':from': parseFloat(queryFrom), //remove gmt + 8
         ':to': parseFloat(queryTo),
     };
 
-    let keyCondition = "booksModule = :booksModule and createdAt between :from and :to";
+    let keyCondition = "aesiModule = :aesiModule and createdAt between :from and :to";
 
     const params = {
         TableName: LOGS_TABLE,

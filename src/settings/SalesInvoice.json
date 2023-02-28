@@ -1,6 +1,6 @@
 [
     {
-        "customer_name": "entity_name"
+        "customer_name" : "entity_name" 
     },
     "delivery_address",
     "payment_term_name",

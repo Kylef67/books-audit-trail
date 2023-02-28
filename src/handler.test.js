@@ -46,7 +46,7 @@ describe('receiveSns', () => {
                             "old" : {
                                 "customer_name" : "old_some_value",
                             },
-                            "booksModule" : "SalesInvoice"
+                            "aesiModule" : "SalesInvoice"
                         })
                     }
                 }
@@ -128,7 +128,7 @@ describe('getAuditTrails', () => {
                 userId: 1,
                 from: '2020-01-01',
                 to: '2020-01-02',
-                booksModule: 'SalesInvoice'
+                aesiModule: 'SalesInvoice'
             }
         }
 
@@ -146,7 +146,7 @@ describe('getAuditTrails', () => {
         //arrange
         const event = {
             queryStringParameters: {
-                booksModule: 'SalesInvoice'
+                aesiModule: 'SalesInvoice'
             }
         }
 
