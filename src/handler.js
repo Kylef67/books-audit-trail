@@ -63,8 +63,8 @@ async function receiveSns(event, context, callback) {
 async function getAuditTrails(event, context, callback) {
     const { userId, from, to, aesiModule, transactionId } = event.queryStringParameters
 
-    const queryFrom = (from) ? new Date(from).getTime() - (8 * 3600000) : new Date('2022-05-27').getTime()
-    const queryTo = (to) ? new Date(to).getTime() - (8 * 3600000) : new Date().getTime()
+    const queryFrom = (from) ? new Date(from).getTime() - (8 * 3600000) : new Date('2022-05-27').getTime() + '000'
+    const queryTo = (to) ? new Date(to).getTime() - (8 * 3600000) : new Date().getTime() + '000'
 
     const expressions = {
         ':aesiModule': aesiModule,
@@ -90,6 +90,8 @@ async function getAuditTrails(event, context, callback) {
         expressions[":transactionId"] = transactionId
         params.FilterExpression = "transactionId = :transactionId"
     }
+
+    console.log(params);
 
     const result = await dynamoDbClient.query(params).promise();
 

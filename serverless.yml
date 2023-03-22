@@ -100,7 +100,7 @@ resources:
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: N
-          - AttributeName: userId
+          - AttributeName: transactionId
             AttributeType: S        
         KeySchema:
           - AttributeName: aesiModule
@@ -110,7 +110,7 @@ resources:
         GlobalSecondaryIndexes:
           - IndexName: aesiModuleIndex
             KeySchema:
-              - AttributeName: userId
+              - AttributeName: transactionId
                 KeyType: HASH
               - AttributeName: createdAt
                 KeyType: RANGE
