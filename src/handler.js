@@ -92,6 +92,10 @@ async function getAuditTrails(event, context, callback) {
     params.FilterExpression = "transactionId = :transactionId";
   }
 
+  if (userId && transactionId) {
+    params.FilterExpression = "userId = :userId and transactionId = :transactionId";
+  }
+
   const result = await dynamoDbClient.query(params).promise();
 
   callback(null, {
