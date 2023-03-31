@@ -1,0 +1,20 @@
+{
+  "globals": {
+    "RUN_TEST_AGAINST_AWS": true,
+    "TEST_BASE_URL": true
+  },
+  "parser": "babel-eslint",
+  "extends": ["airbnb-base", "prettier"],
+  "plugins": ["prettier", "jest"],
+  "rules": {
+    "prettier/prettier": ["error"],
+    "import/prefer-default-export": "off",
+    "complexity": ["error", { "max": 5 }],
+    "max-lines": ["error", 150]
+  },
+  "env": {
+    "commonjs": true,
+    "node": true,
+    "jest": true
+  }
+}

@@ -1,12 +1,11 @@
-service: aesi-audit-trail
+service: cargill-aesi-audit-trail
 frameworkVersion: '2 || 3'
 useDotenv: true
 variablesResolutionMode: 20210326
 
 custom:
-  companyName: 'cargill'
-  tableName: aesi-audit-trail
-  topicName: '${self:custom.companyName}-aesi-audit-trail-${sls:stage}'
+  tableName: '${self:service}-${sls:stage}'
+  topicName: '${self:service}-${sls:stage}'
   topicArn:
     Fn::Join:
       - ''
@@ -43,12 +42,14 @@ custom:
             - Ref: AWS::Region
             - '.amazonaws.com'
 provider:
+  stackName: '${self:service}-${sls:stage}'
   region: ap-northeast-1
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
   iam:
     role:
+      name: '${self:service}-${sls:stage}'
       statements:
         - Effect: Allow
           Action:
@@ -73,8 +74,8 @@ provider:
           Resource:
             - 'arn:aws:ssm:${aws:region}:${aws:accountId}:${self:custom.topicName}'
   environment:
-    LOGS_TABLE: '${self:custom.companyName}-${self:custom.tableName}-${sls:stage}'
-    AUDIT_SNS_TOPIC: 'arn:aws:sns:${aws:region}:${aws:accountId}:${self:custom.topicName}'
+    LOGS_TABLE: '${self:service}-${sls:stage}'
+    AUDIT_SNS_TOPIC: '${self:service}-${sls:stage}'
 
 functions:
   receiveSns:
@@ -87,7 +88,11 @@ functions:
     - http:
           path: logs
           method: get
-          cors: true
+          cors:
+            origins:
+              - 'http://127.0.0.1:5173'
+              - 'http://localhost:5173'
+              - 'https://st-cmp.aesiph.io'
 
 resources:
   Resources:
@@ -117,7 +122,7 @@ resources:
             Projection:
               ProjectionType: 'ALL'
         BillingMode: PAY_PER_REQUEST
-        TableName: '${self:custom.companyName}-${self:custom.tableName}-${sls:stage}'
+        TableName: '${self:service}-${sls:stage}'
     AesiAuditTrailTopic:
       Type: AWS::SNS::Topic
       Properties:
@@ -132,10 +137,11 @@ resources:
     ApiEndpoint:
       Type: 'AWS::SSM::Parameter'
       Properties:
-        Name: '${self:custom.companyName}-${self:custom.tableName}-${sls:stage}-api-endpoint'
+        Name: '${self:service}-${sls:stage}-api-endpoint'
         Type: String
         Value: ${self:custom.webServiceEndpoint}
 plugins:
+  - serverless-bundle
   - serverless-dynamodb-local
   - serverless-offline-sns
   - serverless-offline

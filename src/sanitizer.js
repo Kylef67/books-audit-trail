@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+/* eslint-disable no-restricted-syntax */
 const { get } = require("lodash");
 
 /**
@@ -12,9 +14,8 @@ const { get } = require("lodash");
  */
 
 function sanitizeData(data, moduleAuditSettings) {
+  const sanitizedData = {};
   if (data && moduleAuditSettings) {
-    const sanitizedData = {};
-
     // Iterate through each module setting to be audited
     moduleAuditSettings.forEach((field) => {
       if (typeof field === "string" && data[field]) {
@@ -23,7 +24,7 @@ function sanitizeData(data, moduleAuditSettings) {
       } else if (typeof field === "object") {
         // If the field is an object, iterate through each key-value pair
         // to retrieve the nested data.
-        for (let [key, lineItemFields] of Object.entries(field)) {
+        for (const [key, lineItemFields] of Object.entries(field)) {
           if (data[key]) {
             if (typeof lineItemFields === "string") {
               // If the line item field is a string, retrieve the data for that field
@@ -34,11 +35,14 @@ function sanitizeData(data, moduleAuditSettings) {
               sanitizedData[key] = [];
 
               data[key].forEach((lineItem) => {
-                let sanitizedLineItem = {};
+                const sanitizedLineItem = {};
 
                 // Iterate through each line item field to retrieve the nested data
                 lineItemFields.forEach((lineItemField) => {
-                  sanitizedLineItem[lineItemField] = get(lineItem, lineItemField);
+                  sanitizedLineItem[lineItemField] = get(
+                    lineItem,
+                    lineItemField
+                  );
                 });
 
                 sanitizedData[key].push(sanitizedLineItem);
@@ -48,12 +52,11 @@ function sanitizeData(data, moduleAuditSettings) {
         }
       }
     });
-
-    return sanitizedData;
   }
-}
 
+  return sanitizedData;
+}
 
 module.exports = {
-    sanitizeData
-}
+  sanitizeData,
+};

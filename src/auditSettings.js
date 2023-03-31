@@ -1,5 +1,5 @@
-const SalesInvoiceSettings = require("./settings/SalesInvoice.json")
+const SalesInvoiceSettings = require("./settings/SalesInvoice.json");
 
 module.exports = {
-    SalesInvoice : SalesInvoiceSettings
-}
+  SalesInvoice: SalesInvoiceSettings,
+};
